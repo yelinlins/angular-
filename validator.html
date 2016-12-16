@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+	</head>
+	<body ng-app="myAPP" ng-controller="ctrl">
+		
+		<form novalidate name="myForm">
+			
+			<input even ng-maxlength="10" required type="number" name="username" ng-model="username" />
+			<br />
+			<input ng-click="sub()" type="submit" value="提交"/>
+		</form>
+		
+	</body>
+	
+	<script src="angular.min.js"></script>
+	
+	<script>
+		var app = angular.module("myAPP",[]);
+		
+		app.controller("ctrl",["$scope",function($scope){
+			
+			$scope.sub = function(){
+				alert($scope.myForm.username.$valid);
+			}
+			
+		}]);
+		
+		
+		app.directive("even",[function(){
+			return {
+				restrict:"A",
+				//require指定在link函数中都传递什么参数，
+				//ngModel表示需要当前元素在angular中的模型对象。
+				require:"ngModel",
+				link:function($scope,$el,attr,mod){
+					//$validators表示某个input的验证对象，验证对象
+					//中可以存放多个验证函数，每当需要验证时，angular
+					//会依次调用$validators所有验证函数，每个函数都
+					//验证通过时，input就会变为valid状态。
+					mod.$validators.even = function(value){
+						return value%2==0;
+					}
+				}
+			}
+		}]);
+		
+		
+		
+	</script>
+	
+</html>

@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<link href="Font-Awesome/css/font-awesome.css" rel="stylesheet"/>
+		<style>
+			*{
+				box-sizing: border-box;
+			}
+			body{
+				margin: 0;
+				padding: 20px;
+			}
+			
+			input{
+				width: 100%;
+				height: 40px;
+				border-radius: 6px;
+				border: solid 1px grey;
+				padding-left: 10px;
+				box-shadow: inset 0 0 4px grey;
+				-moz-appearance: textfield;
+			}
+			
+			input:focus{
+				box-shadow: inset 0 0 4px green;
+			}
+			
+			input[type=submit]{
+				background-color: #337AB7;
+				border: none;
+				font-size: 18px;
+				color: white;
+			}
+			input[type=submit]:disabled{
+				background-color: grey;
+			}
+			
+			form div{
+				position: relative;
+				margin-bottom: 10px;
+			}
+			
+			form div span{
+				position: absolute;
+				right: 10px;
+				top: 50%;
+				transform: translateY(-50%);
+				font-size: 20px;
+			}
+			
+			span.icon-ok-sign{
+				color: green;
+			}
+			
+			span.icon-remove-sign{
+				color: red;
+			}
+			
+		</style>
+	</head>
+	<body ng-app="myAPP" ng-controller="ctrl">
+		
+		
+		<!--在form中添加name属性，angular会自动在当前作用域
+		添加一个和name的值同名的对象变量，表示这个form，
+		通过这个对象可以获得form以及form中每个input的
+		验证是否通过-->
+		
+		<!--novalidate关闭表单自带的验证功能，使用angular验证
+		表单时一般都要关闭-->
+		
+		<!--如果form中每天添加action属性，angular会自动
+		拦截form的提交并触发ng-submit事件-->
+		<form novalidate name="myForm" ng-submit="submit()">
+			<div>
+				<input required ng-minlength="2" ng-maxlength="6" type="text" ng-model="username" name="username" placeholder="用户名" autocomplete="off"/>
+				<!--通过作用域中form对象打点可以获得form中的某个
+				input。input的$valid属性表示是否通过验证。
+				$invalid表示是否不通过验证。
+				$dirty表示否是被修改过。-->
+				<span ng-show="myForm.username.$valid&&myForm.username.$dirty" class="icon-ok-sign"></span>
+				<span ng-show="myForm.username.$invalid&&myForm.username.$dirty" class="icon-remove-sign" title="用户名必须在2-6位之间"></span>
+			</div>
+			
+			<div>
+				<input required ng-minlength="6" type="password" ng-model="psw" name="psw" placeholder="密码" autocomplete="off"/>
+				<span ng-show="myForm.psw.$valid&&myForm.psw.$dirty" class="icon-ok-sign"></span>
+				<span ng-show="myForm.psw.$invalid&&myForm.psw.$dirty" class="icon-remove-sign" title="密码至少6位"></span>
+			</div>
+			
+			<div>
+				<input equal-to="psw" type="password" ng-model="confirm" name="confirm" placeholder="确认密码" autocomplete="off"/>
+				<span ng-show="myForm.confirm.$valid&&myForm.confirm.$dirty" class="icon-ok-sign"></span>
+				<span ng-show="myForm.confirm.$invalid&&myForm.confirm.$dirty" class="icon-remove-sign" title="两次密码输入不一致"></span>
+			</div>
+			
+			<div>
+				<input pattern="^\d{1,3}$" type="number" ng-model="age" name="age" placeholder="年龄" autocomplete="off"/>
+				<span ng-show="myForm.age.$valid&&myForm.age.$dirty" class="icon-ok-sign"></span>
+				<span ng-show="myForm.age.$invalid&&myForm.age.$dirty" class="icon-remove-sign" title="年龄格式错误"></span>
+			</div>
+			
+			<div>
+				<input required pattern="^1[3|5|7|8]\d{9}$" type="text" ng-model="tel" name="tel" placeholder="手机号" autocomplete="off"/>
+				<span ng-show="myForm.tel.$valid&&myForm.tel.$dirty" class="icon-ok-sign"></span>
+				<span ng-show="myForm.tel.$invalid&&myForm.tel.$dirty" class="icon-remove-sign" title="年龄格式错误"></span>
+			</div>
+			
+			<input ng-disabled="myForm.$invalid" type="submit" value="提交"/>
+		</form>
+		
+	</body>
+	
+	<script src="angular.min.js"></script>
+	
+	<script>
+		var app = angular.module("myAPP",[]);
+		
+		app.controller("ctrl",["$scope",function($scope){
+			
+			$scope.submit = function(e){
+				
+			}
+			
+		}]);
+		
+		//自定义表单验证指令，用于判断两个input中的内容是否一致
+		app.directive("equalTo",[function(){
+			return {
+				restrict:"A",
+				require:"ngModel",
+				link:function($scope,$el,attr,mod){
+					//console.dir(attr.equalTo);
+					mod.$validators.equalTo = function(value){
+						return value == $scope[attr.equalTo];
+					}
+				}
+			}
+		}]);
+		
+		
+	</script>
+	
+	
+	
+</html>
